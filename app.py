@@ -58,19 +58,23 @@ def chat():
             ]
         }
 
-        # Request without stream
-        response = requests.post(OLLAMA_API, json=ollama_request)
+        # Streamed request to Ollama
+        response = requests.post(OLLAMA_API, json=ollama_request, stream=True)
         logger.info(f"Ollama API status: {response.status_code}")
 
         if response.status_code == 200:
-            try:
-                data = response.json()
-                message = data.get("message", {}).get("content", "")
-                logger.info(f"Ollama response: {message}")
-                return jsonify({"response": message})
-            except json.JSONDecodeError:
-                logger.error("Failed to parse Ollama JSON response.")
-                return jsonify({"error": "Invalid JSON from Ollama"}), 500
+            full_response = ""
+            for line in response.iter_lines():
+                if line:
+                    try:
+                        chunk = json.loads(line.decode("utf-8"))
+                        content_piece = chunk.get("message", {}).get("content", "")
+                        full_response += content_piece
+                    except Exception as e:
+                        logger.warning(f"Skipping chunk due to error: {e}")
+
+            logger.info(f"Full assembled response: {full_response}")
+            return jsonify({"response": full_response})
         else:
             logger.error(f"Ollama API error: {response.text}")
             return jsonify({"error": "Failed to get response from Ollama"}), 500
@@ -81,4 +85,5 @@ def chat():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002, debug=True)
+
 
