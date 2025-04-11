@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 # App configuration
-OLLAMA_API = os.environ.get('OLLAMA_API', "http://localhost:11434/api/chat")
+OLLAMA_API = os.environ.get('OLLAMA_API', "https://79e0-174-93-238-64.ngrok-free.app/api/chat")
 OLLAMA_MODEL = os.environ.get('OLLAMA_MODEL', "nexus")
 # Set to False by default to connect to the real Ollama server
 USE_MOCK_RESPONSES = os.environ.get('USE_MOCK_RESPONSES', 'false').lower() == 'true'
