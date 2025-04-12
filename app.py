@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
 import json
@@ -10,8 +10,8 @@ import time
 # Initialize Flask app
 app = Flask(__name__)
 
-# Enable CORS for your Vercel frontend
-CORS(app, origins=["https://nexus-kappa-pearl.vercel.app"])
+# Enable CORS for your local frontend (served at http://localhost:5500)
+CORS(app, origins=["http://localhost:5500"])
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -20,20 +20,6 @@ logger = logging.getLogger(__name__)
 # App configuration
 OLLAMA_API = os.environ.get('OLLAMA_API', "http://localhost:11434/api/chat")
 OLLAMA_MODEL = os.environ.get('OLLAMA_MODEL', "nexus")
-USE_MOCK_RESPONSES = os.environ.get('USE_MOCK_RESPONSES', 'false').lower() == 'true'
-
-# Mock demo responses (fallback for demo mode)
-SAMPLE_RESPONSES = [
-    "I'm a simulated response since Ollama isn't connected.",
-    "Hello! This is a demonstration of the chat interface.",
-    "In a real setup, your message would be sent to Ollama.",
-    "Enjoy this simulated response while we're in demo mode!"
-]
-
-@app.route('/')
-def home():
-    mode = "Demo Mode" if USE_MOCK_RESPONSES else f"Ollama: {OLLAMA_MODEL}"
-    return render_template('index.html', mode=mode, model=OLLAMA_MODEL)
 
 @app.route('/chat', methods=['POST'])
 def chat():
@@ -45,12 +31,6 @@ def chat():
 
         prompt = data['prompt']
         logger.info(f"Received prompt: {prompt}")
-
-        if USE_MOCK_RESPONSES:
-            time.sleep(1)
-            response_text = random.choice(SAMPLE_RESPONSES)
-            logger.info(f"Mock response: {response_text}")
-            return jsonify({"response": response_text})
 
         # Construct request payload for Ollama
         ollama_request = {
@@ -87,7 +67,8 @@ def chat():
 
 # Run the Flask app on port 8000
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug = True)
+    app.run(host='0.0.0.0', port=8000, debug=True)
+
 
 
 
