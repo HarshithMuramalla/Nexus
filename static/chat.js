@@ -62,7 +62,11 @@ document.addEventListener('DOMContentLoaded', () => {
     showTypingIndicator();
 
     try {
-      const response = await fetch('/chat', {
+      const baseURL = window.location.hostname.includes('vercel.app')
+        ? 'https://13f3-174-93-238-64.ngrok-free.app'
+        : '';
+
+      const response = await fetch(`${baseURL}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt })
@@ -132,5 +136,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
-
-  
