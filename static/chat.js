@@ -62,10 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     showTypingIndicator();
 
     try {
-      // Updated ngrok URL pointing to Flask on port 8000
-      const baseURL = window.location.hostname.includes('vercel.app')
-        ? 'https://3367-174-93-238-64.ngrok-free.app'
-        : '';
+      const baseURL = 'http://localhost:8000';  // Local Flask backend
 
       const response = await fetch(`${baseURL}/chat`, {
         method: 'POST',
