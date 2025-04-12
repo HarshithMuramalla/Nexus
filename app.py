@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
 import requests
 import json
 import logging
@@ -8,6 +9,9 @@ import time
 
 # Initialize Flask app
 app = Flask(__name__)
+
+# Enable CORS for your Vercel frontend
+CORS(app, origins=["https://nexus-kappa-pearl.vercel.app"])
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -85,5 +89,6 @@ def chat():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002, debug=True)
+
 
 
