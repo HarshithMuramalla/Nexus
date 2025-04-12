@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       const baseURL = window.location.hostname.includes('vercel.app')
-        ? 'https://13f3-174-93-238-64.ngrok-free.app'  // Replace with current ngrok if it changes
+        ? 'https://efa8-174-93-238-64.ngrok-free.app'
         : '';
 
       const response = await fetch(`${baseURL}/chat`, {
@@ -136,4 +136,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
-
