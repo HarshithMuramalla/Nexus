@@ -22,15 +22,12 @@ OLLAMA_API = os.environ.get('OLLAMA_API', "http://localhost:11434/api/chat")
 OLLAMA_MODEL = os.environ.get('OLLAMA_MODEL', "nexus")
 USE_MOCK_RESPONSES = os.environ.get('USE_MOCK_RESPONSES', 'false').lower() == 'true'
 
-# Mock demo responses
+# Mock demo responses (fallback for demo mode)
 SAMPLE_RESPONSES = [
-    "I'm a simulated response since Ollama isn't connected. In a real setup, I would pass your query to the Ollama API!",
-    "Hello! This is a demonstration of the chat interface. Your actual Ollama model would provide real responses here.",
-    "The interface is fully functional, but I'm just a mock responder since we're not connected to Ollama. Nice UI though, right?",
-    "If you had Ollama running locally, you'd get an actual AI response here. For now, I'm just showing off the interface capabilities!",
-    "This is a placeholder response. In production, your message would be sent to Ollama running on port 11434.",
-    "I'm demonstrating how the chat interface works. All features are functional, but responses are pre-written without Ollama.",
-    "In a real setup, your message would be processed by Ollama. For now, enjoy this simulated response!",
+    "I'm a simulated response since Ollama isn't connected.",
+    "Hello! This is a demonstration of the chat interface.",
+    "In a real setup, your message would be sent to Ollama.",
+    "Enjoy this simulated response while we're in demo mode!"
 ]
 
 @app.route('/')
@@ -55,6 +52,7 @@ def chat():
             logger.info(f"Mock response: {response_text}")
             return jsonify({"response": response_text})
 
+        # Construct request payload for Ollama
         ollama_request = {
             "model": OLLAMA_MODEL,
             "messages": [
@@ -62,7 +60,7 @@ def chat():
             ]
         }
 
-        # Streamed request to Ollama
+        # Send to Ollama and stream response
         response = requests.post(OLLAMA_API, json=ollama_request, stream=True)
         logger.info(f"Ollama API status: {response.status_code}")
 
@@ -87,8 +85,10 @@ def chat():
         logger.error(f"Unexpected error: {e}")
         return jsonify({"error": str(e)}), 500
 
+# Run the Flask app on port 8000
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5002, debug=True)
+    app.run(host='0.0.0.0', port=8000, debug = True)
+
 
 
 
