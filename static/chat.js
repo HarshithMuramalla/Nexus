@@ -62,9 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     showTypingIndicator();
 
     try {
-      const baseURL = 'http://localhost:8000';  // Local Flask backend
-
-      const response = await fetch(`${baseURL}/chat`, {
+      const response = await fetch(`/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt })
@@ -96,12 +94,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   micButton.addEventListener('click', () => {
-    if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
       alert('Speech recognition is not supported in this browser.');
       return;
     }
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
     recognition.lang = 'en-US';
 
@@ -134,4 +132,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
 

@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import requests
 import json
@@ -7,20 +7,24 @@ import os
 import random
 import time
 
-# Initialize Flask app
-app = Flask(__name__)
-
-# Enable CORS for your local frontend (served at http://localhost:5500)
-CORS(app, origins=["http://localhost:5500"])
+# Initialize Flask app with templates and static folders
+app = Flask(__name__, static_folder='static', template_folder='templates')
+CORS(app)
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-# App configuration
+# Ollama settings
 OLLAMA_API = os.environ.get('OLLAMA_API', "http://localhost:11434/api/chat")
 OLLAMA_MODEL = os.environ.get('OLLAMA_MODEL', "nexus")
 
+# Serve frontend UI
+@app.route('/')
+def home():
+    return render_template('index.html')  # requires templates/index.html
+
+# Handle chat messages
 @app.route('/chat', methods=['POST'])
 def chat():
     try:
@@ -32,7 +36,6 @@ def chat():
         prompt = data['prompt']
         logger.info(f"Received prompt: {prompt}")
 
-        # Construct request payload for Ollama
         ollama_request = {
             "model": OLLAMA_MODEL,
             "messages": [
@@ -40,7 +43,6 @@ def chat():
             ]
         }
 
-        # Send to Ollama and stream response
         response = requests.post(OLLAMA_API, json=ollama_request, stream=True)
         logger.info(f"Ollama API status: {response.status_code}")
 
@@ -65,9 +67,10 @@ def chat():
         logger.error(f"Unexpected error: {e}")
         return jsonify({"error": str(e)}), 500
 
-# Run the Flask app on port 8000
+# Start the Flask server
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
+
 
 
 
